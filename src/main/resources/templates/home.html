@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <title>就诊预约系统V0.01</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/layui/layui.css" media="all">
+</head>
+
+<body>
+<!--************************************
+*页面名称：就诊预约系统V0.01 - 首页
+*主要功能：选择预约时间
+
+使用Layui的'element', 'form', 'layedit', 'laydate'模块
+
+****************************************-->
+
+<!--本系统名-->
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 0px;">
+    <center>
+        <h1 class="layui-bg-blue">就诊预约系统V0.01</h1>
+    </center>
+</fieldset>
+
+
+<!--医院名字-->
+<blockquote class="layui-elem-quote">
+    <h2>北京xx医院
+        <button class="layui-btn layui-btn-danger layui-btn-xs">三甲</button>
+        <button class="layui-btn layui-btn-danger layui-btn-xs">公立</button>
+    </h2>
+</blockquote>
+
+
+<!--导航栏目-->
+<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+    <ul class="layui-tab-title">
+        <li class="layui-this">概览</li>
+        <li>详细介绍</li>
+        <li>医院科室</li>
+    </ul>
+    <div class="layui-tab-content" style="height: 50px;">
+        <div class="layui-tab-item layui-show">
+            地       址：北京市东城区天坛西里6号 查看地图<br/>
+            行车路线： 乘坐公交乘2路、15路、17路、20路<br/>
+            电       话：010-114(预约挂号), 010-67096611(总机), 010-67096550(热线咨询)<br/>
+        </div>
+        <div class="layui-tab-item">
+            官网：<a href="http://www.bjtth.org/Home/" target="_blank">http://www.bjtth.org/Home/</a><br/>
+            首都xx大学附属北京xx医院始建于1956年8月23日，是一所以神经外科为先导，神经科学为特色，集医、教、研、防为一体的三级甲等综合性医院。是世界三大神经外科研究中心之一、亚洲的神经外科临床、科研、教学基地。医院总占地面积83900.56平方米，建筑面积92898.56平方米，编制床位950张，临床、医技科室45个，全院职工总数2033人。
+        </div>
+        <div class="layui-tab-item">
+            科室主要分为内科和外科。
+        </div>
+    </div>
+</div>
+
+
+<!--显示状态信息-->
+<blockquote class="layui-elem-quote">
+    <div th:text="${statusMsg}" style="color:red"></div>
+</blockquote>
+
+
+<!--预约挂号填写块-->
+<fieldset class="layui-elem-field site-demo-button" style="margin-top: 0px;">
+    <legend>预约挂号</legend>
+    <center>
+        <form class="layui-form" th:action="@{/checkAndTryToSave}" method="post">
+            <!--请输入就诊日期-->
+            <div class="layui-inline">
+                <label class="layui-input-inline">请输入就诊日期：</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="date" th:value="${user.date}" th:field="*{user.date}" lay-verify="title" autocomplete="off" placeholder="2018-11-30" class="layui-input" id="date">
+                </div>
+            </div>
+            <br/><br/>
+            <!--请选择就诊时间-->
+            <div class="layui-inline">
+                <label class="layui-input-inline">请选择就诊时间：</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="time" th:value="${user.time}" th:field="*{user.time}" lay-verify="required" autocomplete="off" placeholder="10:00:00" class="layui-input" id="time">
+                </div>
+            </div>
+            <br/><br/>
+            <!--请输入手机号码-->
+            <div class="layui-inline">
+                <label class="layui-input-inline">请输入手机号码：</label>
+                <div class="layui-input-inline">
+                    <!--<input type="tel" name="phone" th:value="${user.phone}" th:field="*{user.phone}" lay-verify="required|phone" autocomplete="off" class="layui-input">-->
+                    <input type="text" name="phone" th:value="${user.phone}" th:field="*{user.phone}" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <br/><br/>
+            <!--请选择预约部门-->
+            <div class="layui-inline">
+                <label class="layui-input-inline">请选择预约部门：</label>
+                <div class="layui-input-inline">
+                    <select name="interest" th:value="${user.department}" th:field="*{user.department}" lay-verify="required" autocomplete="off" class="layui-input" lay-search="">
+                        <option value="1">内科</option>
+                        <option value="2">外科</option>
+                    </select>
+                </div>
+            </div>
+            <br/><br/>
+            <!--立即提交按钮-->
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <!--<button type="submit" class="layui-btn layui-btn-normal layui-btn-radius" lay-submit="" lay-filter="checkButton">查询该天否可预约</button>-->
+                    <button type="submit" class="layui-btn layui-btn-danger layui-btn-radius" lay-submit="" lay-filter="submitButton">尝试预约</button>
+                    <button type="reset" class="layui-btn layui-btn-radius layui-btn-primary">重置</button>
+                </div>
+            </div>
+
+        </form>
+    </center>
+    <!--取消预约按钮-->
+    <form class="layui-form" th:action="@{/cancelUser}" method="get">
+        <div class="layui-form-item">
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-radius" lay-submit="" lay-filter="cancelButton">取消预约</button>
+        </div>
+    </form>
+
+</fieldset>
+
+<!--layui各模块事件方法-->
+<script src="layui/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['element', 'form', 'layedit', 'laydate'], function(){  //如果只加载一个模块，可以不填数组。
+        var element = layui.element //获取element模块
+            ,form = layui.form //获取form模块
+            ,layer = layui.layer //获取layer模块
+            ,layedit = layui.layedit //获取layedit模块
+            ,laydate = layui.laydate //获取laydate模块
+
+            // //向世界问个好
+            // layer.msg('您好！');
+
+        //一些事件监听
+        element.on('tab(demo)', function(data){
+            console.log(data);
+        });
+
+        //就诊日期
+        laydate.render({
+            elem: '#date' //指定元素
+            ,min: 0
+            ,max: 30
+        });
+        //就诊时间
+        laydate.render({
+            elem: '#time'
+            ,type: 'time'
+            ,min: '09:00:00'
+            ,max: '17:00:00'
+            ,btns: ['clear', 'confirm']
+        });
+
+        // //表单初始赋值
+        // form.val('example', {
+        //     "date": "2018-11-30"
+        //     ,"time": "10:00:00"
+        //     ,"department": 1
+        //     ,"phone": ""
+        // })
+
+    });
+</script>
+</body>
+</html>
